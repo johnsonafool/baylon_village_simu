@@ -1,3 +1,3 @@
 # Quick Start
 
-To see the simulation, host index.html file on local host
+To see the simulation, open index.html file on local host
