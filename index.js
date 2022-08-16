@@ -30,6 +30,15 @@ const createScene = function () {
     new BABYLON.Vector3(0, 0, 0),
     scene
   );
+
+  // const camera = new BABYLON.ArcRotateCamera(
+  //   "camera",
+  //   Math.PI / 2,
+  //   Math.PI / 2.5,
+  //   150,
+  //   new BABYLON.Vector3(0, 60, 0)
+  // );
+
   camera.upperBetaLimit = Math.PI / 2.2; // limit the z axis no less zero
 
   camera.attachControl(canvas, true);
@@ -38,6 +47,75 @@ const createScene = function () {
     "light",
     new BABYLON.Vector3(1, 1, 0)
   );
+
+  light.intensity = 0.1;
+
+  // GUI
+  const adt = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+  const panel = new BABYLON.GUI.StackPanel();
+  panel.width = "220px";
+  panel.top = "-25px";
+  panel.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+  panel.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+  adt.addControl(panel);
+
+  const header = new BABYLON.GUI.TextBlock();
+  header.text = "Night to Day";
+  header.height = "30px";
+  header.color = "white";
+  panel.addControl(header);
+
+  const slider = new BABYLON.GUI.Slider();
+  slider.minimum = 0;
+  slider.maximum = 1;
+  slider.borderColor = "black";
+  slider.color = "gray";
+  slider.background = "white";
+  slider.value = 1;
+  slider.height = "20px";
+  slider.width = "200px";
+  slider.onValueChangedObservable.add((value) => {
+    if (light) {
+      light.intensity = value;
+    }
+  });
+  panel.addControl(slider);
+
+  BABYLON.SceneLoader.ImportMeshAsync(
+    "",
+    "https://assets.babylonjs.com/meshes/",
+    "lamp.babylon"
+  ).then(() => {
+    const lampLight = new BABYLON.SpotLight(
+      "lampLight",
+      BABYLON.Vector3.Zero(),
+      new BABYLON.Vector3(0, -1, 0),
+      0.8 * Math.PI,
+      0.01,
+      scene
+    );
+    lampLight.diffuse = BABYLON.Color3.Yellow();
+    lampLight.parent = scene.getMeshByName("bulb");
+
+    const lamp = scene.getMeshByName("lamp");
+    lamp.position = new BABYLON.Vector3(2, 0, 2);
+    lamp.rotation = BABYLON.Vector3.Zero();
+    lamp.rotation.y = -Math.PI / 4;
+
+    lamp3 = lamp.clone("lamp3");
+    lamp3.position.z = -8;
+
+    lamp1 = lamp.clone("lamp1");
+    lamp1.position.x = -8;
+    lamp1.position.z = 1.2;
+    lamp1.rotation.y = Math.PI / 2;
+
+    lamp2 = lamp1.clone("lamp2");
+    lamp2.position.x = -2.7;
+    lamp2.position.z = 0.8;
+    lamp2.rotation.y = -Math.PI / 2;
+  });
 
   //Switch fountain on and off
   let switched = false;
